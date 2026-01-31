@@ -40,7 +40,7 @@ if (typeof API_KEY !== 'string') {
  */
 function App() {
   const { showUserConfig, showAgentEdit } = useUI();
-  const [mode, setMode] = useState<'companion' | 'debate'>('companion');
+  const [mode, setMode] = useState<'companion' | 'debate'>('debate');
 
   return (
     <div className="App">
