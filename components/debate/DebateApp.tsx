@@ -8,6 +8,10 @@ import { useLiveApi } from '@/hooks/media/use-live-api';
 import { Agent, Charlotte, Paul } from '@/lib/presets/agents';
 import BasicFace from '../demo/basic-face/BasicFace';
 import cn from 'classnames';
+import { renderBasicFace } from '../demo/basic-face/basic-face-render';
+import useFace from '@/hooks/demo/use-face';
+import useHover from '@/hooks/demo/use-hover';
+import useTilt from '@/hooks/demo/use-tilt';
 
 const API_KEY = process.env.API_KEY as string;
 
@@ -29,6 +33,7 @@ function DebaterFace({
         <BasicFace
           canvasRef={canvasRef}
           color={agent.bodyColor}
+          volumeProp={volume}
         />
       </div>
       <div className="debater-info">
@@ -221,18 +226,9 @@ export default function DebateApp() {
   );
 }
 
-// A wrapper to render the face with the correct volume, 
-// bypassing the Context requirement of the original BasicFace by mocking it 
-// or using a modified BasicFace. 
-// To allow the existing BasicFace to work, we need to modify BasicFace.tsx to allow optional volume prop.
-import { renderBasicFace } from '../demo/basic-face/basic-face-render';
-import useFace from '@/hooks/demo/use-face';
-import useHover from '@/hooks/demo/use-hover';
-import useTilt from '@/hooks/demo/use-tilt';
-
 function DebateFaceRenderer({ client, agent, transcript, isTalking }: any) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const { eyeScale } = useFace(); // Note: useFace reads global context volume, which is 0 here. That's fine for eyes.
+    const { eyeScale } = useFace(); 
     const mouthScale = Math.min(client.volume * 2, 1);
     
     const hoverPosition = useHover();
@@ -245,7 +241,6 @@ function DebateFaceRenderer({ client, agent, transcript, isTalking }: any) {
     useEffect(() => {
         if(canvasRef.current) {
             const ctx = canvasRef.current.getContext('2d')!;
-            // We need a resize handler here strictly speaking, but simplified for now
             canvasRef.current.width = 400;
             canvasRef.current.height = 400;
             renderBasicFace({

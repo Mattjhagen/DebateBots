@@ -2,14 +2,14 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-import { RefObject, useEffect, useState, useRef } from 'react';
+import { RefObject, useEffect, useState, useRef, useContext } from 'react';
 
 import { renderBasicFace } from './basic-face-render';
 
 import useFace from '../../../hooks/demo/use-face';
 import useHover from '../../../hooks/demo/use-hover';
 import useTilt from '../../../hooks/demo/use-tilt';
-import { useLiveAPIContext } from '../../../contexts/LiveAPIContext';
+import { LiveAPIContext } from '../../../contexts/LiveAPIContext';
 
 // Minimum volume level that indicates audio output is occurring
 const AUDIO_OUTPUT_DETECTION_THRESHOLD = 0.05;
@@ -37,8 +37,10 @@ export default function BasicFace({
   // Use a nullable type for the ref to allow assignment
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Audio output volume - use prop if provided, else context
-  const context = useLiveAPIContext();
+  // Audio output volume - use prop if provided, else attempt context
+  // We use useContext directly here so it doesn't throw if provider is missing
+  const context = useContext(LiveAPIContext);
+  
   // Safe access if context is missing (e.g. in debate mode without global provider)
   const volume = volumeProp !== undefined ? volumeProp : (context?.volume || 0);
 

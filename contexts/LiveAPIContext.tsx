@@ -21,7 +21,7 @@
 import { createContext, FC, ReactNode, useContext } from 'react';
 import { useLiveApi, UseLiveApiResults } from '../hooks/media/use-live-api';
 
-const LiveAPIContext = createContext<UseLiveApiResults | undefined>(undefined);
+export const LiveAPIContext = createContext<UseLiveApiResults | undefined>(undefined);
 
 export type LiveAPIProviderProps = {
   children: ReactNode;
