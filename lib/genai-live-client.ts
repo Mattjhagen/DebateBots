@@ -65,6 +65,8 @@ export interface LiveClientEventTypes {
   ) => void;
   // Emitted when the current turn is complete
   turncomplete: () => void;
+  // Emitted when audio transcription is received
+  transcription: (text: string) => void;
 }
 
 export class GenAILiveClient extends EventEmitter<LiveClientEventTypes> {
@@ -212,6 +214,7 @@ export class GenAILiveClient extends EventEmitter<LiveClientEventTypes> {
         this.emit('turncomplete');
       }
 
+      // Handle transcription
       if (serverContent.modelTurn) {
         let parts: Part[] = serverContent.modelTurn.parts || [];
 
@@ -228,6 +231,7 @@ export class GenAILiveClient extends EventEmitter<LiveClientEventTypes> {
             this.log(`server.audio`, `buffer (${data.byteLength})`);
           }
         });
+        
         if (!otherParts.length) {
           return;
         }
@@ -237,8 +241,15 @@ export class GenAILiveClient extends EventEmitter<LiveClientEventTypes> {
         const content: LiveServerContent = { modelTurn: { parts } };
         this.emit('content', content);
         this.log(`server.content`, message);
-      } else {
-        console.log('received unmatched message', message);
+      }
+      
+      // Explicitly check for outputTranscription
+      // @ts-ignore - outputTranscription might not be in the strict types yet but exists in API
+      if (serverContent.outputTranscription && serverContent.outputTranscription.text) {
+        // @ts-ignore
+        const text = serverContent.outputTranscription.text;
+        this.emit('transcription', text);
+        this.log('server.transcription', text);
       }
     }
   }

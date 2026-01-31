@@ -941,3 +941,115 @@ input[type='range'] {
   color: white;
   font-size: 24px;
 }
+
+/* Debate Mode */
+.debate-wrapper {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--Neutral-5);
+    overflow: hidden;
+}
+
+.debate-controls {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--Neutral-20);
+    z-index: 10;
+}
+
+.setup-box {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.setup-box input {
+    background: var(--Neutral-10);
+    width: 400px;
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: 1px solid var(--Neutral-30);
+}
+
+.setup-box input:focus {
+    border-color: var(--Blue-500);
+}
+
+.start-btn, .stop-btn {
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    color: var(--Neutral-5);
+}
+
+.start-btn {
+    background: var(--Blue-500);
+}
+
+.stop-btn {
+    background: var(--Red-500);
+}
+
+.arenas {
+    flex: 1;
+    display: flex;
+    position: relative;
+}
+
+.arena-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    transition: all 0.3s;
+}
+
+.arena-side.left {
+    background: radial-gradient(circle at center, rgba(234, 67, 53, 0.1) 0%, transparent 70%);
+}
+
+.arena-side.right {
+     background: radial-gradient(circle at center, rgba(66, 133, 244, 0.1) 0%, transparent 70%);
+}
+
+.vs-badge {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--Neutral-00);
+    border: 2px solid var(--Neutral-30);
+    padding: 10px 20px;
+    border-radius: 50%;
+    font-weight: 900;
+    font-size: 24px;
+    z-index: 5;
+}
+
+.debater {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.debater h2 {
+    font-size: 24px;
+    opacity: 0.8;
+}
+
+.captions {
+    height: 80px;
+    width: 300px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--Neutral-60);
+    overflow: hidden;
+    mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+}

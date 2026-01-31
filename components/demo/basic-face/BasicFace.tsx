@@ -24,17 +24,22 @@ type BasicFaceProps = {
   radius?: number;
   /** The color of the face. */
   color?: string;
+  /** Optional volume override (if not using global context) */
+  volumeProp?: number;
 };
 
 export default function BasicFace({
   canvasRef,
   radius = 250,
   color,
+  volumeProp,
 }: BasicFaceProps) {
   const timeoutRef = useRef<NodeJS.Timeout>(null);
 
-  // Audio output volume
-  const { volume } = useLiveAPIContext();
+  // Audio output volume - use prop if provided, else context
+  const context = useLiveAPIContext();
+  // Safe access if context is missing (e.g. in debate mode without global provider)
+  const volume = volumeProp !== undefined ? volumeProp : (context?.volume || 0);
 
   // Talking state
   const [isTalking, setIsTalking] = useState(false);
@@ -42,7 +47,10 @@ export default function BasicFace({
   const [scale, setScale] = useState(0.1);
 
   // Face state
-  const { eyeScale, mouthScale } = useFace();
+  const { eyeScale } = useFace();
+  // Calculate mouth scale from volume locally if we are using volumeProp
+  const mouthScale = volumeProp !== undefined ? Math.min(volume * 2, 1) : useFace().mouthScale;
+
   const hoverPosition = useHover();
   const tiltAngle = useTilt({
     maxAngle: 5,

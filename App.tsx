@@ -18,10 +18,12 @@
  * limitations under the License.
  */
 
+import { useState } from 'react';
 import AgentEdit from './components/AgentEdit';
 import ControlTray from './components/console/control-tray/ControlTray';
 import ErrorScreen from './components/demo/ErrorSreen';
 import KeynoteCompanion from './components/demo/keynote-companion/KeynoteCompanion';
+import DebateApp from './components/debate/DebateApp';
 import Header from './components/Header';
 import UserSettings from './components/UserSettings';
 import { LiveAPIProvider } from './contexts/LiveAPIContext';
@@ -40,24 +42,48 @@ if (typeof API_KEY !== 'string') {
  */
 function App() {
   const { showUserConfig, showAgentEdit } = useUI();
+  const [mode, setMode] = useState<'companion' | 'debate'>('companion');
+
   return (
     <div className="App">
-      <LiveAPIProvider apiKey={API_KEY}>
-        <ErrorScreen />
-        <Header />
+      <div className="mode-toggle" style={{ position: 'fixed', bottom: 20, left: 20, zIndex: 9999 }}>
+        <button 
+            className={`action-button ${mode === 'companion' ? 'connected' : ''}`} 
+            onClick={() => setMode('companion')}
+            title="Companion Mode"
+        >
+            <span className="material-symbols-outlined">person</span>
+        </button>
+        <div style={{height: 10}} />
+        <button 
+            className={`action-button ${mode === 'debate' ? 'connected' : ''}`}
+            onClick={() => setMode('debate')}
+            title="Debate Mode"
+        >
+             <span className="material-symbols-outlined">forum</span>
+        </button>
+      </div>
 
-        {showUserConfig && <UserSettings />}
-        {showAgentEdit && <AgentEdit />}
-        <div className="streaming-console">
-          <main>
-            <div className="main-app-area">
-              <KeynoteCompanion />
-            </div>
+      {mode === 'debate' ? (
+        <DebateApp />
+      ) : (
+        <LiveAPIProvider apiKey={API_KEY}>
+          <ErrorScreen />
+          <Header />
 
-            <ControlTray></ControlTray>
-          </main>
-        </div>
-      </LiveAPIProvider>
+          {showUserConfig && <UserSettings />}
+          {showAgentEdit && <AgentEdit />}
+          <div className="streaming-console">
+            <main>
+              <div className="main-app-area">
+                <KeynoteCompanion />
+              </div>
+
+              <ControlTray></ControlTray>
+            </main>
+          </div>
+        </LiveAPIProvider>
+      )}
     </div>
   );
 }

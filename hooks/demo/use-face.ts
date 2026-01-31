@@ -2,8 +2,9 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useContext } from 'react';
 import { useLiveAPIContext } from '../../contexts/LiveAPIContext';
+// import { LiveAPIContext } from '../../contexts/LiveAPIContext'; // Context isn't exported as value, only type/hook
 
 export type FaceResults = {
   /** A value that represents how open the eyes are. */
@@ -11,30 +12,6 @@ export type FaceResults = {
   /** A value that represents how open the mouth is. */
   mouthScale: number;
 };
-
-/*
-function easeInOutCubic(x: number): number {
-  return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2
-}
-
-function easeOutExpo(x: number): number {
-  return x === 1 ? 1 : 1 - Math.pow(2, -10 * x)
-}
-
-function easeInOutExpo(x: number): number {
-  return x === 0
-    ? 0
-    : x === 1
-    ? 1
-    : x < 0.5
-    ? Math.pow(2, 20 * x - 10) / 2
-    : (2 - Math.pow(2, -20 * x + 10)) / 2
-}
-
-function easeOutCirc(x: number): number {
-  return Math.sqrt(1 - Math.pow(x - 1, 2))
-}
-*/
 
 function easeOutQuint(x: number): number {
   return 1 - Math.pow(1 - x, 5);
@@ -88,7 +65,21 @@ export function useBlink({ speed }: BlinkProps) {
 }
 
 export default function useFace() {
-  const { volume } = useLiveAPIContext();
+  // We wrap this in try/catch or just check if we are inside a provider
+  // Since useLiveAPIContext throws if not in provider, we need to handle that or suppress it.
+  // Ideally, components using useFace should be in a provider.
+  // For the DebateMode, we are not in the main provider, so useFace might fail if called directly.
+  // However, we modified DebateApp to manually handle mouthScale.
+  // But useFace also returns eyeScale (blink).
+  
+  let volume = 0;
+  try {
+     const ctx = useLiveAPIContext();
+     volume = ctx.volume;
+  } catch (e) {
+      // Ignore error if used outside provider
+  }
+
   const eyeScale = useBlink({ speed: 0.0125 });
 
   return { eyeScale, mouthScale: volume / 2 };
