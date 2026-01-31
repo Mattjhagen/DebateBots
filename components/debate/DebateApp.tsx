@@ -9,7 +9,7 @@ import { Agent, Charlotte, Paul } from '@/lib/presets/agents';
 import BasicFace from '../demo/basic-face/BasicFace';
 import cn from 'classnames';
 
-const API_KEY = process.env.GEMINI_API_KEY as string;
+const API_KEY = process.env.API_KEY as string;
 
 // Separate component for a single debater to manage their own Face render state
 function DebaterFace({
@@ -29,20 +29,7 @@ function DebaterFace({
         <BasicFace
           canvasRef={canvasRef}
           color={agent.bodyColor}
-          // We can pass a slight visual variance based on volume if needed,
-          // but BasicFace handles volume internally via useLiveAPIContext usually.
-          // Since we are not in the provider, we need to hack BasicFace or just use the canvas.
-          // Wait, BasicFace uses useLiveAPIContext internally.
-          // We need to provide a Mock context or modify BasicFace.
-          // For simplicity in this demo, we will wrap each Face in a specific context provider?
-          // No, BasicFace is tightly coupled. Let's make a simplified Face here or rely on the fact
-          // that BasicFace renders the canvas.
-          // Actually, we can reuse BasicFace if we pass the volume manually.
-          // *Correction*: BasicFace reads context. We need to modify BasicFace to accept volume prop optionally.
         />
-        {/* We can't easily modify BasicFace without breaking other files in this strict prompt mode unless we modify BasicFace.tsx.
-            However, we can render the canvas directly here using the renderer.
-         */}
       </div>
       <div className="debater-info">
         <h3>{agent.name}</h3>
@@ -50,11 +37,6 @@ function DebaterFace({
     </div>
   );
 }
-
-// We need a wrapper for BasicFace that overrides the context hook for the specific volume of *this* agent
-// Since we can't easily rewrite BasicFace to not use context without changing it,
-// we will rely on a Context bridge or just modify BasicFace.tsx in the next step.
-// For now, let's assume we will update BasicFace to accept volume.
 
 export default function DebateApp() {
   // Agent 1: Pro-Topic (Left)
@@ -91,7 +73,7 @@ export default function DebateApp() {
           },
         ],
       },
-      outputAudioTranscription: { model: 'gemini-2.5-flash-preview-native-audio-dialog' },
+      outputAudioTranscription: {},
     });
 
     // Config Right
@@ -111,7 +93,7 @@ export default function DebateApp() {
           },
         ],
       },
-      outputAudioTranscription: { model: 'gemini-2.5-flash-preview-native-audio-dialog' },
+      outputAudioTranscription: {},
     });
   }, [leftClient.setConfig, rightClient.setConfig]);
 
@@ -215,10 +197,6 @@ export default function DebateApp() {
       </div>
 
       <div className="arenas">
-        {/* We need to use a Context Provider here if we want to reuse BasicFace 
-            OR we assume we will modify BasicFace to accept props. 
-            Since BasicFace is modified in the XML below, we can use props. 
-        */}
         <div className="arena-side left">
             <DebateFaceRenderer
                 client={leftClient}
