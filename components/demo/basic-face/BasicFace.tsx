@@ -19,7 +19,7 @@ const TALKING_STATE_COOLDOWN_MS = 2000;
 
 type BasicFaceProps = {
   /** The canvas element on which to render the face. */
-  canvasRef: RefObject<HTMLCanvasElement | null>;
+  canvasRef: RefObject<HTMLCanvasElement>;
   /** The radius of the face. */
   radius?: number;
   /** The color of the face. */
@@ -34,7 +34,8 @@ export default function BasicFace({
   color,
   volumeProp,
 }: BasicFaceProps) {
-  const timeoutRef = useRef<NodeJS.Timeout>(null);
+  // Use a nullable type for the ref to allow assignment
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Audio output volume - use prop if provided, else context
   const context = useLiveAPIContext();
@@ -83,7 +84,8 @@ export default function BasicFace({
 
   // Render the face on the canvas
   useEffect(() => {
-    const ctx = canvasRef.current?.getContext('2d')!;
+    if (!canvasRef.current) return;
+    const ctx = canvasRef.current.getContext('2d')!;
     renderBasicFace({ ctx, mouthScale, eyeScale, color });
   }, [canvasRef, volume, eyeScale, mouthScale, color, scale]);
 
