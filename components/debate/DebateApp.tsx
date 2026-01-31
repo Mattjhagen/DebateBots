@@ -202,7 +202,7 @@ export default function DebateApp() {
       </div>
 
       <div className="arenas">
-        <div className="arena-side left">
+        <div className={cn('arena-side left', { active: leftClient.volume > 0.01 })}>
             <DebateFaceRenderer
                 client={leftClient}
                 agent={leftAgent}
@@ -213,7 +213,7 @@ export default function DebateApp() {
         
         <div className="vs-badge">VS</div>
 
-        <div className="arena-side right">
+        <div className={cn('arena-side right', { active: rightClient.volume > 0.01 })}>
              <DebateFaceRenderer
                 client={rightClient}
                 agent={rightAgent}

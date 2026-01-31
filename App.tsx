@@ -30,6 +30,9 @@ import { LiveAPIProvider } from './contexts/LiveAPIContext';
 import { useUI, useUser } from './lib/state';
 
 const API_KEY = process.env.API_KEY as string;
+if (typeof API_KEY !== 'string') {
+  throw new Error('set REACT_APP_API_KEY or VITE_API_KEY in your environment');
+}
 
 /**
  * Main application component that provides a streaming interface for Live API.

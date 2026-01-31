@@ -959,6 +959,7 @@ input[type='range'] {
     justify-content: center;
     border-bottom: 1px solid var(--Neutral-20);
     z-index: 10;
+    background: var(--Neutral-00);
 }
 
 .setup-box {
@@ -998,6 +999,7 @@ input[type='range'] {
     flex: 1;
     display: flex;
     position: relative;
+    background-color: #050505;
 }
 
 .arena-side {
@@ -1006,17 +1008,53 @@ input[type='range'] {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
     transition: all 0.3s;
 }
 
-.arena-side.left {
-    background: radial-gradient(circle at center, rgba(234, 67, 53, 0.1) 0%, transparent 70%);
+/* Shared pseudo-element for the spotlight effect */
+.arena-side::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    padding-bottom: 100%; /* Aspect ratio square based on width */
+    transform: translate(-50%, -50%) scale(0.8);
+    border-radius: 50%;
+    opacity: 0.3;
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    z-index: 0;
+    pointer-events: none;
 }
 
-.arena-side.right {
-     background: radial-gradient(circle at center, rgba(66, 133, 244, 0.1) 0%, transparent 70%);
+/* Active state for spotlight */
+.arena-side.active::before {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.6;
 }
+
+/* Left Arena - Paul (Red) */
+.arena-side.left {
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    background: radial-gradient(circle at center, #1a0505 0%, #000 70%);
+}
+
+.arena-side.left::before {
+    background: radial-gradient(circle, rgba(234, 67, 53, 0.4) 0%, transparent 70%);
+}
+
+/* Right Arena - Charlotte (Purple) */
+.arena-side.right {
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    background: radial-gradient(circle at center, #0d001a 0%, #000 70%);
+}
+
+.arena-side.right::before {
+    background: radial-gradient(circle, rgba(161, 66, 244, 0.4) 0%, transparent 70%);
+}
+
 
 .vs-badge {
     position: absolute;
@@ -1030,6 +1068,7 @@ input[type='range'] {
     font-weight: 900;
     font-size: 24px;
     z-index: 5;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
 }
 
 .debater {
@@ -1037,6 +1076,8 @@ input[type='range'] {
     flex-direction: column;
     align-items: center;
     gap: 20px;
+    z-index: 1; /* Keep above background */
+    position: relative;
 }
 
 .debater h2 {
